@@ -1,6 +1,6 @@
 <template>
   <div class="pixel-grid" :style="getGridStyle()">
-    <pixel-grid-row v-for="(row, index) in grid" :rowIndex="index" :key="row + Math.random()" :row="row"></pixel-grid-row>
+    <pixel-grid-row v-for="(row, index) in grid" :color="color" :rowIndex="index" :key="row + Math.random()" :row="row"></pixel-grid-row>
   </div>
 </template>
 
@@ -12,12 +12,13 @@ export default {
   components :{
     PixelGridRow
   },
-  props: ['grid'],
+  props: ['dimensions', 'grid', 'color'],
   methods: {
     getGridStyle: function() {
+      const gridTemplateRows = new Array(this.dimensions.x).fill('auto').join(' ');
       return {
         'grid-template-columns': 'auto',
-        'grid-template-rows': 'auto auto auto'
+        'grid-template-rows': gridTemplateRows
       }
     }
   }

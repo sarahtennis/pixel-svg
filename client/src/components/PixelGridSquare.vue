@@ -1,6 +1,11 @@
 <template>
-  <div class="pixel-grid-square" :style="getSquareStyle()" @click="onClick()">
-
+  <div class="pixel-grid-square"
+       :style="getSquareStyle()" 
+       @mouseenter="onMouseEnter()"
+       @mouseleave="onMouseLeave()"
+       @click="onClick()">
+    <div class="transparent" v-if="!square"></div>
+    <div class="hovered" v-if="isHovered" :style="getHoverStyle()"></div>
   </div>
 </template>
 
@@ -9,15 +14,37 @@ import EventBus from '../event-bus';
 
 export default {
   name: "PixelGridSquare",
-  props: ['square', 'position'],
+  data: function() {
+    return {
+      isHovered: false
+    }
+  },
+  props: ['square', 'position', 'color'],
   methods: {
     getSquareStyle: function() {
+      if (this.square) {
+        return {
+          "background-color": this.square
+        }
+      } else {
+        return {
+          "background-color": "#fff"
+        }
+      }
+    },
+    getHoverStyle: function() {
       return {
-        "background-color": this.square
+        'background-color': this.color
       }
     },
     onClick: function() {
       EventBus.$emit('squareClicked', this.position);
+    },
+    onMouseEnter: function() {
+      this.$set(this, 'isHovered', true);
+    },
+    onMouseLeave: function() {
+      this.$set(this, 'isHovered', false);
     }
   }
 };
@@ -29,5 +56,22 @@ export default {
   height: 50px;
   width: 50px;
   border: 1px solid white;
+  position: relative;
+
+  .transparent {
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    position: absolute;
+    background: url('../assets/Transparent.svg');
+    background-size: 25px 25px;
+  }
+
+  .hovered {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    z-index: 2;
+  }
 }
 </style>
