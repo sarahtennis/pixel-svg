@@ -1,52 +1,61 @@
 <template>
-  <div class="pixel-grid-square"
-       :style="getSquareStyle()" 
-       @mouseenter="onMouseEnter()"
-       @mouseleave="onMouseLeave()"
-       @click="onClick()">
-    <div class="transparent" v-if="!square"></div>
+  <div
+    class="pixel-grid-square"
+    :style="getSquareStyle()"
+    @mouseenter="onMouseEnter()"
+    @mouseleave="onMouseLeave()"
+    @click="onClick()"
+  >
+    <div class="transparent" v-if="!square || (isHovered && !color)"></div>
     <div class="hovered" v-if="isHovered" :style="getHoverStyle()"></div>
   </div>
 </template>
 
 <script>
-import EventBus from '../event-bus';
+import EventBus from "../event-bus";
 
 export default {
   name: "PixelGridSquare",
-  data: function() {
+  data: function () {
     return {
-      isHovered: false
-    }
+      isHovered: false,
+    };
   },
-  props: ['square', 'position', 'color'],
+  props: ["square", "position", "color"],
   methods: {
-    getSquareStyle: function() {
+    getSquareStyle: function () {
       if (this.square) {
         return {
-          "background-color": this.square
-        }
+          "background-color": this.square,
+        };
       } else {
         return {
-          "background-color": "#fff"
-        }
+          "background-color": "#fff",
+        };
       }
     },
-    getHoverStyle: function() {
-      return {
-        'background-color': this.color
+    getHoverStyle: function () {
+      if (this.color) {
+        return {
+          "background-color": this.color,
+        };
+      } else {
+        return {
+          "background-color": "#fff",
+          "z-index": 0,
+        };
       }
     },
-    onClick: function() {
-      EventBus.$emit('squareClicked', this.position);
+    onClick: function () {
+      EventBus.$emit("squareClicked", this.position);
     },
-    onMouseEnter: function() {
-      this.$set(this, 'isHovered', true);
+    onMouseEnter: function () {
+      this.$set(this, "isHovered", true);
     },
-    onMouseLeave: function() {
-      this.$set(this, 'isHovered', false);
-    }
-  }
+    onMouseLeave: function () {
+      this.$set(this, "isHovered", false);
+    },
+  },
 };
 </script>
 
@@ -63,7 +72,7 @@ export default {
     width: 100%;
     z-index: 1;
     position: absolute;
-    background: url('../assets/Transparent.svg');
+    background: url("../assets/Transparent.svg");
     background-size: 25px 25px;
   }
 
