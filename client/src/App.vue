@@ -1,11 +1,21 @@
 <template>
   <div id="app">
-    <color-picker :color="color"></color-picker>
-    <button @click="color = ''">Erase</button>
-    <pixel-grid :dimensions="dimensions" :grid="grid" :color="color" />
-    <button @click="generateSvgPaths()">Generate SVG</button>
-    <textarea v-model="svg"></textarea>
-    <div class="preview" ref="preview"></div>
+    <div class="content-container">
+      <div class="drawing-container">
+        <div class="drawing-actions">
+          <color-picker :color="color"></color-picker>
+          <button @click="color = ''">Erase</button>
+        </div>
+        <pixel-grid :dimensions="dimensions" :grid="grid" :color="color" />
+      </div>
+      <div class="preview-container">
+        <textarea v-model="svg"></textarea>
+        <button class="generate-svg-btn" @click="generateSvgPaths()">
+          Generate SVG
+        </button>
+        <div class="preview" ref="preview"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -23,8 +33,8 @@ export default {
   data: function () {
     return {
       dimensions: {
-        x: 17,
-        y: 17,
+        x: 10,
+        y: 10,
       },
       color: "#ffff00",
       grid: [],
@@ -115,10 +125,50 @@ export default {
 </script>
 
 <style lang="scss">
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
 #app {
   display: flex;
-  flex-wrap: wrap;
-  max-width: 500px;
-  background: #888;
+  justify-content: center;
+  align-items: flex-start;
+
+  .content-container {
+    display: flex;
+
+    .drawing-container {
+      .drawing-actions {
+        height: 50px;
+        display: flex;
+      }
+    }
+
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      min-width: 300px;
+      margin-top: 50px;
+      margin-left: 10px;
+
+      textarea {
+        min-height: 200px;
+      }
+
+      .generate-svg-btn {
+        height: 50px;
+      }
+
+      .preview {
+        background: #c0c0c0;
+
+        svg {
+          width: 100%;
+          height: auto;
+        }
+      }
+    }
+  }
 }
 </style>
