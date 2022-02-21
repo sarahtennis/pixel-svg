@@ -1,0 +1,22 @@
+.pixel-grid-square {
+  height: 50px;
+  width: 50px;
+  border: 1px solid white;
+  position: relative;
+}
+
+.pixel-grid-square .transparent {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  position: absolute;
+  background: url("../../Transparent.svg");
+  background-size: 25px 25px;
+}
+
+.pixel-grid-square .hovered {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 2;
+}

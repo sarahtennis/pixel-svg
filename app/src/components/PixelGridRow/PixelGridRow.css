@@ -1,0 +1,5 @@
+.pixel-grid-row {
+  display: grid;
+  grid-template-rows: auto;
+  grid-column-gap: 1px;
+}

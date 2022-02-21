@@ -1,0 +1,7 @@
+.pixel-grid {
+  background: black;
+  display: inline-grid;
+  border-top: none;
+  grid-row-gap: 1px;
+  border: 1px solid black;
+}
