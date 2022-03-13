@@ -3,6 +3,10 @@ import React, { useState } from 'react';
 function PixelGridSquare(props) {
   const [isHovered, setIsHovered] = useState(false);
 
+  function onSquareClick() {
+    props.updateGridAtPosition(props.rowIndex, props.columnIndex, props.color);
+  }
+
   function getIsTransparent() {
     return !props.square || (isHovered && !props.color);
   }
@@ -35,6 +39,7 @@ function PixelGridSquare(props) {
   return (
     <div className="pixel-grid-square"
       style={getSquareStyle()}
+      onClick={() => onSquareClick()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}>
       {getIsTransparent() ? <div className="transparent"></div> : null}

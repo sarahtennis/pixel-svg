@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
 import PixelGridSquare from '../PixelGridSquare/PixelGridSquare';
 
 function PixelGridRow(props) {
-
   function getStyles() {
     return {
       'gridTemplateColumns': `repeat(${props.row.length}, auto)`
@@ -11,7 +9,7 @@ function PixelGridRow(props) {
 
   return (
     <div className="pixel-grid-row" style={getStyles()}>
-      {props.row.map((square, index) => <PixelGridSquare key={`s${index}`} color={props.color}></PixelGridSquare>)}
+      {props.row.map((square, index) => <PixelGridSquare key={`s${index}`} rowIndex={props.rowIndex} columnIndex={index} color={props.color} square={square} updateGridAtPosition={props.updateGridAtPosition}></PixelGridSquare>)}
     </div>
   )
 }

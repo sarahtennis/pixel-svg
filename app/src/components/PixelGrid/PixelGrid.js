@@ -18,6 +18,12 @@ function PixelGrid(props) {
     return output;
   }
 
+  function updateGridAtPosition(row, column, color) {
+    const updatedGrid = [...grid];
+    updatedGrid[row][column] = color;
+    setGrid(updatedGrid);
+  }
+
   function getGridStyle() {
     return {
       'gridTemplateColumns': 'auto',
@@ -27,7 +33,7 @@ function PixelGrid(props) {
 
   return (
     <div className="pixel-grid" style={getGridStyle()}>
-      {grid.map((row, index) => <PixelGridRow key={`r${index}`} row={row} color={props.color}></PixelGridRow>)}
+      {grid.map((row, index) => <PixelGridRow key={`r${index}`} row={row} rowIndex={index} color={props.color} updateGridAtPosition={updateGridAtPosition}></PixelGridRow>)}
     </div>
   )
 }
