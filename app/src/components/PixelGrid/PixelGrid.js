@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PixelGridRow from '../PixelGridRow/PixelGridRow';
-import PixelGridSquare from '../PixelGridSquare/PixelGridSquare';
 
 function PixelGrid(props) {
   const [dimensions, setDimensions] = useState({ rowCount: 10, columnCount: 10 });
