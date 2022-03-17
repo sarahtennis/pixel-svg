@@ -2,6 +2,7 @@
   height: 50px;
   width: 50px;
   border: 1px solid white;
+  box-shadow: 0 0 0 1px black;
   position: relative;
 }
 
@@ -15,6 +16,13 @@
 }
 
 .pixel-grid-square .hovered {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 3;
+}
+
+.pixel-grid-square .filled-color {
   height: 100%;
   width: 100%;
   position: absolute;

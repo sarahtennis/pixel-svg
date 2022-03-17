@@ -11,36 +11,6 @@ export function hexToRGB(hex) {
 }
 
 function OpacityPicker(props) {
-  const picker = useRef(null);
-  const slider = useRef(null);
-  const [pickerWidth, setPickerWidth] = useState(0);
-  const [sliderPosition, setSliderPosition] = useState(0);
-  const [dragPosition, setDragPosition] = useState(null);
-
-  useEffect(() => {
-    setPickerWidth(picker.current.clientWidth);
-  }, []);
-
-  useEffect(() => {
-    updateSlider();
-  }, [pickerWidth]);
-
-  // useEffect(() => {
-  //   if (dragPosition) {
-  //     updateSelectedOpacity();
-  //   }
-  // }, [dragPosition]);
-
-  function updateSlider() {
-    setSliderPosition(props.selectedOpacity * 100);
-  }
-
-  function getSliderStyle() {
-    return {
-      'left': `${sliderPosition}%`
-    }
-  }
-
   function getOpacityPickerStyle() {
     const { r, g, b } = hexToRGB(props.selectedColor);
     return {
@@ -48,39 +18,14 @@ function OpacityPicker(props) {
     }
   }
 
-  function onMouseDown(e) {
-    const onWindowMouseMove = (e) => {
-      const boundingBox = picker.current.getBoundingClientRect();
-      let newPercent = 100 - (boundingBox.right - e.clientX) / boundingBox.width * 100;
-      if (newPercent > 100) {
-        newPercent = 100
-      } else if (newPercent < 0) {
-        newPercent = 0;
-      }
-      setSliderPosition(newPercent);
-    }
-
-    const onWindowMouseUp = () => {
-      // setIsDragging(false);
-      window.removeEventListener('mouseup', onWindowMouseUp);
-      window.removeEventListener('mousemove', onWindowMouseMove);
-    }
-
-    window.addEventListener('mousemove', onWindowMouseMove);
-    window.addEventListener('mouseup', onWindowMouseUp);
-  }
-
-  function onWindowMouseMove(e) {
-    console.log('mouse move');
-  }
-
   // convert to rgba in final write to svg
   return (
-    <div ref={picker} className="opacity-picker" style={getOpacityPickerStyle()}>
-      <div className="opacity-picker-slider"
-        ref={slider}
-        style={getSliderStyle()}
-        onMouseDown={onMouseDown}></div>
+    <div className="opacity-picker-container">
+      <div className="opacity-picker">
+        <input type="range" step="0.01" min="0" max="1" style={getOpacityPickerStyle()} value={props.selectedOpacity} onChange={(e) => props.setSelectedOpacity(e.target.value)}></input>
+        <div className="opacity-picker-background"></div>
+      </div>
+      <input type="number" step="0.01" min="0" max="1" value={props.selectedOpacity} onChange={(e) => props.setSelectedOpacity(e.target.value)} ></input>
     </div>
   );
 }

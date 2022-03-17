@@ -1,5 +1,5 @@
 .pixel-grid {
-  background: black;
+  background: #fff;
   display: inline-grid;
   border-top: none;
   grid-row-gap: 1px;

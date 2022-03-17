@@ -7,18 +7,10 @@ function PixelGridSquare(props) {
     props.updateGridAtPosition(props.rowIndex, props.columnIndex, props.color);
   }
 
-  function getIsTransparent() {
-    return !props.square || (isHovered && !props.color);
-  }
-
   function getSquareStyle() {
     if (props.square) {
       return {
         "backgroundColor": props.square,
-      };
-    } else {
-      return {
-        "backgroundColor": "#fff",
       };
     }
   }
@@ -38,11 +30,11 @@ function PixelGridSquare(props) {
 
   return (
     <div className="pixel-grid-square"
-      style={getSquareStyle()}
       onClick={() => onSquareClick()}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}>
-      {getIsTransparent() ? <div className="transparent"></div> : null}
+      <div className="transparent"></div>
+      <div className="filled-color" style={getSquareStyle()}></div>
       {isHovered ? <div className="hovered" style={getHoverStyle()}></div> : null}
     </div >
   )
