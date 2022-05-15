@@ -1,10 +1,11 @@
 <template>
-  <div class="grid">
+  <div class="grid" :style="getGridStyle()">
     <grid-row
       v-for="(row, index) in grid"
       :key="'r' + index"
       :row="row"
-      :rowKey="'r' + index"
+      :rowKey="index"
+      :updateColorAtIndex="updateColorAtIndex"
     ></grid-row>
   </div>
 </template>
@@ -17,17 +18,40 @@ export default {
   components: {
     GridRow,
   },
+  props: ["color"],
   data: function () {
     return {
       grid: [
-        [0, 0, 0],
-        [0, 0, 0],
-        [0, 0, 0],
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
       ],
     };
+  },
+  mounted() {},
+  methods: {
+    updateColorAtIndex: function (row, col) {
+      this.$set(this.grid[row], col, this.color.rgba);
+    },
+    getGridStyle: function () {
+      const gridTemplateRows = new Array(this.grid.length)
+        .fill("auto")
+        .join(" ");
+      return {
+        "grid-template-columns": "auto",
+        "grid-template-rows": gridTemplateRows,
+      };
+    },
   },
 };
 </script>
 
-<style>
+<style lang="scss">
+.grid {
+  background: black;
+  display: inline-grid;
+  border-top: none;
+  grid-row-gap: 1px;
+  border: 1px solid black;
+}
 </style>
