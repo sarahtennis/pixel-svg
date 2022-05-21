@@ -18,21 +18,10 @@ export default {
   components: {
     GridRow,
   },
-  props: ["color"],
-  data: function () {
-    return {
-      grid: [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null],
-      ],
-    };
-  },
+  props: ["color", "grid", "updateColorAtIndex"],
+
   mounted() {},
   methods: {
-    updateColorAtIndex: function (row, col) {
-      this.$set(this.grid[row], col, this.color.rgba);
-    },
     getGridStyle: function () {
       const gridTemplateRows = new Array(this.grid.length)
         .fill("auto")

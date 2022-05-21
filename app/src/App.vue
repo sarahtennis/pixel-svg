@@ -1,21 +1,32 @@
 <template>
-  <div id="app">
+  <div id="app" :style="{ 'user-select': isDragging ? 'none' : '' }">
     <div class="left-panel">
-      <grid :color="color"></grid>
+      <grid
+        :grid="grid"
+        :color="color"
+        :updateColorAtIndex="updateColorAtIndex"
+      ></grid>
     </div>
     <div class="right-panel" :style="{ width: widthOfPanel }">
-      <div class="right-panel-resize-area" ref="splitter"></div>
+      <div class="right-panel-resize-area" ref="splitter">
+        <div class="right-panel-resize-bar"></div>
+      </div>
       <color-picker
         :color="color"
         :onColorChange="onColorChange"
       ></color-picker>
+      <div class="generate btn btn-main" @click="() => generateSvgPaths()">
+        Generate
+      </div>
+      <textarea v-model="svg" disabled></textarea>
+      <div ref="preview"></div>
     </div>
   </div>
 </template>
 
 <script>
 import { fromEvent } from "rxjs";
-import { mergeMap, map, takeUntil } from "rxjs/operators";
+import { mergeMap, map, takeUntil, pluck } from "rxjs/operators";
 
 import ColorPicker from "./components/ColorPicker.vue";
 import Grid from "./components/Grid.vue";
@@ -24,8 +35,22 @@ export default {
   name: "App",
   data: function () {
     return {
-      color: { r: 25, g: 77, b: 51, a: 1 },
+      svg: "",
+      grid: [
+        [null, null, null],
+        [null, null, null],
+        [null, null, null],
+      ],
+      color: {
+        rgba: {
+          r: 255,
+          g: 0,
+          b: 255,
+          a: 1,
+        },
+      },
       widthOfPanel: "240px",
+      isDragging: false,
     };
   },
   components: {
@@ -36,24 +61,80 @@ export default {
     const splitter = this.$refs.splitter;
     const $splitterMousedown = fromEvent(splitter, "mousedown");
     const $documentMousemove = fromEvent(document, "mousemove");
-    const $documentMouseup = fromEvent(document, "mouseup");
+    const $documentMouseup = fromEvent(document, "mouseup").pipe(
+      map((e, index) => {
+        this.isDragging = false;
+        return e;
+      })
+    );
     const $splitterDrag = $splitterMousedown.pipe(
-      mergeMap((mousedownEvent) =>
-        $documentMousemove.pipe(
+      mergeMap((mousedownEvent) => {
+        this.isDragging = true;
+        return $documentMousemove.pipe(
           map((mousemoveEvent) => {
             return { mousedownEvent, mousemoveEvent };
           }),
           takeUntil($documentMouseup)
-        )
-      )
+        );
+      })
     );
     $splitterDrag.subscribe(({ mousedownEvent, mousemoveEvent }) => {
       this.widthOfPanel = window.innerWidth - mousemoveEvent.clientX + "px";
     });
   },
   methods: {
+    updateColorAtIndex: function (row, col) {
+      this.$set(this.grid[row], col, this.color.rgba);
+    },
     onColorChange(e) {
       this.color = e;
+    },
+    getFillString(color) {
+      return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+    },
+    generateSvgPaths: function () {
+      const opening = `<svg xmlns="http://www.w3.org/2000/svg" width="${
+        this.grid.length * 10
+      }" height="${this.grid[0].length * 10}" viewBox="0 0 ${
+        this.grid.length * 10 + " " + this.grid[0].length * 10
+      }">`;
+      const closing = "</svg>";
+      const uniqueColors = {};
+      const keyToColor = {};
+      this.grid.forEach((row, rowIndex) => {
+        row.forEach((square, squareIndex) => {
+          const position = { x: rowIndex, y: squareIndex };
+          if (!square) return;
+          const key = `r${square.r}g${square.g}b${square.b}a${square.a}`;
+          if (!uniqueColors[key]) {
+            uniqueColors[key] = [position];
+            keyToColor[key] = square;
+          } else {
+            uniqueColors[key].push(position);
+          }
+        });
+      });
+      console.log(uniqueColors);
+      let outputPaths = "";
+      Object.keys(uniqueColors).forEach((colorKey) => {
+        if (!colorKey) {
+          return;
+        }
+        const positions = uniqueColors[colorKey];
+        let singlePath = `<path fill="${this.getFillString(
+          keyToColor[colorKey]
+        )}" d="`;
+        positions.forEach((position) => {
+          const squarePath = `M ${position.y * 10} ${
+            position.x * 10
+          } h 10 v 10 h -10 L ${position.y * 10} ${position.x * 10} `;
+          singlePath += squarePath;
+        });
+        singlePath += '"/>';
+        outputPaths += singlePath;
+      });
+      this.svg = opening + outputPaths + closing;
+      this.$refs.preview.innerHTML = this.svg;
     },
   },
 };
@@ -84,6 +165,7 @@ body {
 .right-panel {
   position: relative;
   display: flex;
+  flex-direction: column;
   height: 100%;
   max-width: 500px;
   min-width: 240px;
@@ -91,17 +173,20 @@ body {
   flex-shrink: 0;
 
   .right-panel-resize-area {
-    height: 100%;
-    width: 2px;
+    padding: 0 2px;
     position: absolute;
+    z-index: 2;
     left: -2px;
     top: 0;
-    background: magenta;
-    border-left: 1px solid transparent;
-    border-right: 1px solid transparent;
 
     &:hover {
       cursor: ew-resize;
+    }
+
+    .right-panel-resize-bar {
+      height: 100vh;
+      width: 2px;
+      background: magenta;
     }
   }
 }
