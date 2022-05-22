@@ -2,6 +2,7 @@
   <div class="grid-row" :style="getStyles()">
     <square
       v-for="(square, index) in row"
+      :selectedColor="selectedColor"
       :color="square"
       :colIndex="index"
       :rowIndex="rowKey"
@@ -18,10 +19,7 @@ export default {
   components: {
     Square,
   },
-  mounted() {
-    console.log("this", this.row);
-  },
-  props: ["row", "rowKey", "updateColorAtIndex"],
+  props: ["row", "rowKey", "updateColorAtIndex", "selectedColor"],
   methods: {
     getStyles() {
       const gridTemplateColumns = new Array(this.row.length)

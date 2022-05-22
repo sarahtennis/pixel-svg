@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     updateColorAtIndex: function (row, col) {
-      this.$set(this.grid[row], col, this.color.rgba);
+      this.$set(this.grid[row], col, this.color);
     },
     onColorChange(e) {
       this.color = e;
@@ -114,7 +114,6 @@ export default {
           }
         });
       });
-      console.log(uniqueColors);
       let outputPaths = "";
       Object.keys(uniqueColors).forEach((colorKey) => {
         if (!colorKey) {

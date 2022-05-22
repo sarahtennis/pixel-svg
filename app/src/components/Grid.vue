@@ -2,6 +2,7 @@
   <div class="grid" :style="getGridStyle()">
     <grid-row
       v-for="(row, index) in grid"
+      :selectedColor="color"
       :key="'r' + index"
       :row="row"
       :rowKey="index"
