@@ -113,9 +113,9 @@ export default {
     },
     generateSvgPaths: function () {
       const opening = `<svg xmlns="http://www.w3.org/2000/svg" width="${
-        this.grid.length * 10
-      }" height="${this.grid[0].length * 10}" viewBox="0 0 ${
-        this.grid.length * 10 + " " + this.grid[0].length * 10
+        this.dimensions.columns * 10
+      }" height="${this.dimensions.rows * 10}" viewBox="0 0 ${
+        this.dimensions.columns * 10 + " " + this.dimensions.rows * 10
       }">`;
       const closing = "</svg>";
       const uniqueColors = {};
@@ -210,7 +210,11 @@ body {
   }
 
   .logo {
-    padding: 5px;
+    img {
+      margin-left: 5px;
+      margin-top: 5px;
+      height: 50px;
+    }
   }
 }
 </style>
