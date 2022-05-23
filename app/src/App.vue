@@ -11,6 +11,7 @@
       <div class="right-panel-resize-area" ref="splitter">
         <div class="right-panel-resize-bar"></div>
       </div>
+      <div class="logo"><img src="./assets/logo.svg" alt="PixelSVG" /></div>
       <color-picker
         :color="color"
         :onColorChange="onColorChange"
@@ -36,11 +37,11 @@ export default {
   data: function () {
     return {
       svg: "",
-      grid: [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null],
-      ],
+      dimensions: {
+        rows: 5,
+        columns: 10,
+      },
+      grid: [],
       color: {
         rgba: {
           r: 255,
@@ -58,6 +59,7 @@ export default {
     ColorPicker,
   },
   mounted() {
+    this.rerenderGrid();
     const splitter = this.$refs.splitter;
     const $splitterMousedown = fromEvent(splitter, "mousedown");
     const $documentMousemove = fromEvent(document, "mousemove");
@@ -83,8 +85,25 @@ export default {
     });
   },
   methods: {
+    updateGridDimensionsAndRerender(rows, columns) {
+      const newDimensionsObject = {
+        rows,
+        columns,
+      };
+
+      this.dimensions = newDimensionsObject;
+      this.rerenderGrid();
+    },
+    rerenderGrid() {
+      const grid = new Array(this.dimensions.rows).fill(
+        new Array(this.dimensions.columns).fill(null)
+      );
+      this.grid = grid;
+    },
     updateColorAtIndex: function (row, col) {
-      this.$set(this.grid[row], col, this.color);
+      const newGrid = JSON.parse(JSON.stringify(this.grid));
+      newGrid[row][col] = this.color;
+      this.grid = newGrid;
     },
     onColorChange(e) {
       this.color = e;
@@ -102,9 +121,10 @@ export default {
       const uniqueColors = {};
       const keyToColor = {};
       this.grid.forEach((row, rowIndex) => {
-        row.forEach((square, squareIndex) => {
+        row.forEach((squ, squareIndex) => {
           const position = { x: rowIndex, y: squareIndex };
-          if (!square) return;
+          if (!squ) return;
+          const square = squ.rgba;
           const key = `r${square.r}g${square.g}b${square.b}a${square.a}`;
           if (!uniqueColors[key]) {
             uniqueColors[key] = [position];
@@ -187,6 +207,10 @@ body {
       width: 2px;
       background: magenta;
     }
+  }
+
+  .logo {
+    padding: 5px;
   }
 }
 </style>
