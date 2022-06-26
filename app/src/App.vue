@@ -21,7 +21,16 @@
         Generate
       </div>
       <textarea v-model="svg" disabled></textarea>
-      <div ref="preview"></div>
+      <div class="svg-preview" ref="preview" @click="onClickSvgPreview"></div>
+      <div class="svg-preview-modal-backdrop" v-if="showSvgPreviewModal" @click="showSvgPreviewModal = false">
+        <div class="svg-preview-modal" @click="e => e.stopPropagation()">
+          <div class="svg-preview-modal-header">
+            <div class="svg-preview-modal-header-title">SVG preview</div>
+            <div class="svg-preview-modal-header-close" @click="showSvgPreviewModal = false">x</div>
+          </div>
+          <div class="svg-preview-modal-preview" ref="modal-preview" v-html="svg"></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -39,6 +48,7 @@ export default {
   data: function () {
     return {
       svg: "",
+      showSvgPreviewModal: false,
       dimensions: {
         rows: 5,
         columns: 10,
@@ -88,6 +98,10 @@ export default {
     });
   },
   methods: {
+    onClickSvgPreview() {
+      if (!this.svg) return;
+      this.showSvgPreviewModal = true;
+    },
     updateGridDimensionsAndRerender(newDimensionsObject) {
       console.log(newDimensionsObject);
       this.dimensions = newDimensionsObject;
@@ -119,10 +133,12 @@ export default {
     getSvgOpening() {
       if (!this.dimensions || !this.dimensions.columns || !this.dimensions.rows) return '';
 
-      const opening = `<svg xmlns="http://www.w3.org/2000/svg" width="${
-        this.dimensions.columns * 10
-      }" height="${this.dimensions.rows * 10}" viewBox="0 0 ${
-        this.dimensions.columns * 10 + " " + this.dimensions.rows * 10
+      const tallerThanWide = this.dimensions.columns < this.dimensions.rows;
+
+      const opening = `<svg class="${tallerThanWide ? 'max-height' : 'max-width'}" xmlns="http://www.w3.org/2000/svg" width="${
+        this.dimensions.columns
+      }" height="${this.dimensions.rows}" viewBox="0 0 ${
+        this.dimensions.columns + " " + this.dimensions.rows
       }">`;
 
       return opening;
@@ -170,9 +186,9 @@ export default {
                                 fill-opacity="${this.getOpacityFillOpacityString(keyToColor[colorKey])}"
                                 d="`;
         positions.forEach((position) => {
-          const squarePath = `M ${position.y * 10} ${
-            position.x * 10
-          } h 10 v 10 h -10 L ${position.y * 10} ${position.x * 10} `;
+          const squarePath = `M ${position.y} ${
+            position.x
+          } h 1 v 1 h -1 L ${position.y} ${position.x} `;
           singlePath += squarePath;
         });
         singlePath += '"/>';
@@ -231,7 +247,7 @@ body {
 
 .left-panel {
   width: 100%;
-  overflow-x: scroll;
+  overflow: scroll;
 }
 
 .right-panel {
@@ -267,6 +283,64 @@ body {
       margin-left: 5px;
       margin-top: 5px;
       height: 50px;
+    }
+  }
+
+  .svg-preview {
+    width: 100%;
+
+    svg {
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+
+.svg-preview-modal-backdrop {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 40px 0;
+
+  .svg-preview-modal {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 90%;
+    height: 100%;
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+
+    .svg-preview-modal-header {
+      height: 50px;
+      background: #694369;
+      display: flex;
+      flex-shrink: 0;
+      justify-content: space-between;
+    }
+
+    .svg-preview-modal-preview {
+      display: flex;
+      justify-content: center;
+      background: white url("./assets/transparent.svg");
+      background-size: 25px 25px;
+      background-repeat: cover;
+      width: 100%;
+      height: 100%;
+      padding: 10px;
+
+      svg {
+        height: auto;
+        width: auto;
+      }
     }
   }
 }
