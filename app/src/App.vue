@@ -16,6 +16,7 @@
         :color="color"
         :onColorChange="onColorChange"
       ></color-picker>
+      <dimension-setter :dimensions="dimensions" :updateGridDimensionsAndRerender="updateGridDimensionsAndRerender"></dimension-setter>
       <div class="generate btn btn-main" @click="() => generateOpacitySvgPaths()">
         Generate
       </div>
@@ -31,6 +32,7 @@ import { mergeMap, map, takeUntil, pluck } from "rxjs/operators";
 
 import ColorPicker from "./components/ColorPicker.vue";
 import Grid from "./components/Grid.vue";
+import DimensionSetter from './components/DimensionSetter.vue';
 
 export default {
   name: "App",
@@ -57,6 +59,7 @@ export default {
   components: {
     Grid,
     ColorPicker,
+    DimensionSetter
   },
   mounted() {
     this.rerenderGrid();
@@ -85,12 +88,8 @@ export default {
     });
   },
   methods: {
-    updateGridDimensionsAndRerender(rows, columns) {
-      const newDimensionsObject = {
-        rows,
-        columns,
-      };
-
+    updateGridDimensionsAndRerender(newDimensionsObject) {
+      console.log(newDimensionsObject);
       this.dimensions = newDimensionsObject;
       this.rerenderGrid();
     },
@@ -232,6 +231,7 @@ body {
 
 .left-panel {
   width: 100%;
+  overflow-x: scroll;
 }
 
 .right-panel {
@@ -239,7 +239,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: 500px;
+  max-width: 240px;
   min-width: 240px;
   background: green;
   flex-shrink: 0;
