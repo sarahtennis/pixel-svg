@@ -16,7 +16,7 @@
         :color="color"
         :onColorChange="onColorChange"
       ></color-picker>
-      <div class="generate btn btn-main" @click="() => generateSvgPaths()">
+      <div class="generate btn btn-main" @click="() => generateOpacitySvgPaths()">
         Generate
       </div>
       <textarea v-model="svg" disabled></textarea>
@@ -111,13 +111,32 @@ export default {
     getFillString(color) {
       return `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
     },
-    generateSvgPaths: function () {
+    getOpacityFillString(color) {
+      return `rgb(${color.r}, ${color.g}, ${color.b})`;
+    },
+    getOpacityFillOpacityString(color) {
+      return color.a;
+    },
+    getSvgOpening() {
+      if (!this.dimensions || !this.dimensions.columns || !this.dimensions.rows) return '';
+
       const opening = `<svg xmlns="http://www.w3.org/2000/svg" width="${
         this.dimensions.columns * 10
       }" height="${this.dimensions.rows * 10}" viewBox="0 0 ${
         this.dimensions.columns * 10 + " " + this.dimensions.rows * 10
       }">`;
-      const closing = "</svg>";
+
+      return opening;
+    },
+    getSvgClosing() {
+      return '</svg>';
+    },
+    getColors() {
+      if (!this.grid || !this.grid.length || !this.grid[0].length) return {
+        uniqueColors: null,
+        keyToColor: null
+      };
+
       const uniqueColors = {};
       const keyToColor = {};
       this.grid.forEach((row, rowIndex) => {
@@ -134,6 +153,40 @@ export default {
           }
         });
       });
+
+      return {
+        uniqueColors,
+        keyToColor
+      };
+    },
+    generateOpacitySvgPaths() {
+      const {uniqueColors, keyToColor} = this.getColors();
+      if (!uniqueColors || !keyToColor) return '';
+
+      let outputPaths = "";
+      Object.keys(uniqueColors).forEach((colorKey) => {
+        if (!colorKey) return;
+        const positions = uniqueColors[colorKey];
+        let singlePath = `<path fill="${this.getOpacityFillString(keyToColor[colorKey])}"
+                                fill-opacity="${this.getOpacityFillOpacityString(keyToColor[colorKey])}"
+                                d="`;
+        positions.forEach((position) => {
+          const squarePath = `M ${position.y * 10} ${
+            position.x * 10
+          } h 10 v 10 h -10 L ${position.y * 10} ${position.x * 10} `;
+          singlePath += squarePath;
+        });
+        singlePath += '"/>';
+        outputPaths += singlePath;
+      });
+
+      this.svg = this.getSvgOpening() + outputPaths + this.getSvgClosing();
+      this.$refs.preview.innerHTML = this.svg;
+    },
+    generateSvgPaths: function () {
+      const {uniqueColors, keyToColor} = this.getColors();
+      if (!uniqueColors || !keyToColor) return '';
+
       let outputPaths = "";
       Object.keys(uniqueColors).forEach((colorKey) => {
         if (!colorKey) {
@@ -152,7 +205,7 @@ export default {
         singlePath += '"/>';
         outputPaths += singlePath;
       });
-      this.svg = opening + outputPaths + closing;
+      this.svg = this.getSvgOpening() + outputPaths + this.getSvgClosing();
       this.$refs.preview.innerHTML = this.svg;
     },
   },
