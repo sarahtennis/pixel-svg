@@ -16,35 +16,19 @@
           <img src="./assets/logo.svg" alt="PixelSVG" />
         </div>
       </div>
-      <component v-if="currentPanel"
-                 :is="currentPanel"
-                 :color="color"
-                 :onColorChange="onColorChange"
-                 :dimensions="dimensions"
-                 :updateGridDimensionsAndRerender="updateGridDimensionsAndRerender"
-                 :onUpdatePanel="onUpdatePanel">
-      </component>
       <panel-selector :onUpdatePanel="onUpdatePanel" :currentPanel="currentPanel"></panel-selector>
-      <button class="generate btn btn-main" @click="() => generateOpacitySvgPaths()">
-        Generate
-      </button>
-      <textarea v-model="svg" disabled></textarea>
-      <button type="button" class="preview btn btn-default" @click="onClickSvgPreview" :disabled="!svg">Preview</button>
-      <div class="svg-preview-modal-backdrop" v-if="showSvgPreviewModal" @click="showSvgPreviewModal = false">
-        <div class="svg-preview-modal" @click="e => e.stopPropagation()">
-          <div class="svg-preview-modal-header">
-            <div class="svg-preview-modal-header-title">SVG preview</div>
-            <div class="svg-preview-modal-header-close" @click="showSvgPreviewModal = false">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M16 31C24.2843 31 31 24.2843 31 16C31 7.71573 24.2843 1 16 1C7.71573 1 1 7.71573 1 16C1 24.2843 7.71573 31 16 31Z" stroke="currentColor" stroke-width="2"/>
-                <path d="M9 9L24 24" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
-                <path d="M8.49512 23.4586L24.5049 9.54144" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
-              </svg>
-            </div>
-          </div>
-          <div class="svg-preview-modal-preview" ref="modal-preview" v-html="svg"></div>
-        </div>
-      </div>
+      <keep-alive>
+        <component v-if="currentPanel"
+                  :is="currentPanel"
+                  :color="color"
+                  :onColorChange="onColorChange"
+                  :dimensions="dimensions"
+                  :updateGridDimensionsAndRerender="updateGridDimensionsAndRerender"
+                  :onUpdatePanel="onUpdatePanel"
+                  :onGenerate="onGenerate"
+                  :svg="svg">
+        </component>
+      </keep-alive>
     </div>
   </div>
 </template>
@@ -59,13 +43,13 @@ import DimensionSetter from './components/DimensionSetter.vue';
 import DesignPanel from './components/DesignPanel.vue';
 import GridSettingsPanel from "./components/GridSettingsPanel.vue";
 import PanelSelector from './components/PanelSelector.vue';
+import GeneratePanel from './components/GeneratePanel.vue';
 
 export default {
   name: "App",
   data: function () {
     return {
       svg: "",
-      showSvgPreviewModal: false,
       currentPanel: 'GridSettingsPanel',
       dimensions: {
         rows: 5,
@@ -90,7 +74,8 @@ export default {
     DimensionSetter,
     DesignPanel,
     GridSettingsPanel,
-    PanelSelector
+    PanelSelector,
+    GeneratePanel
   },
   mounted() {
     this.rerenderGrid();
@@ -123,20 +108,19 @@ export default {
       if (this.currentPanel === panelName) return;
       this.currentPanel = panelName;
     },
-    onClickSvgPreview() {
-      if (!this.svg) return;
-      this.showSvgPreviewModal = true;
-    },
     updateGridDimensionsAndRerender(newDimensionsObject) {
-      console.log(newDimensionsObject);
       this.dimensions = newDimensionsObject;
       this.rerenderGrid();
+    },
+    onGenerate() {
+      this.generateOpacitySvgPaths();
     },
     rerenderGrid() {
       const grid = new Array(this.dimensions.rows).fill(
         new Array(this.dimensions.columns).fill(null)
       );
       this.grid = grid;
+      this.svg = '';
     },
     updateColorAtIndex: function (row, col) {
       const newGrid = JSON.parse(JSON.stringify(this.grid));
@@ -144,6 +128,7 @@ export default {
       this.grid = newGrid;
     },
     onColorChange(e) {
+      if (!e) this.color = null;
       this.color = e;
     },
     getFillString(color) {
@@ -270,6 +255,41 @@ body {
   width: 100vw;
 }
 
+.btn-group {
+  display: flex;
+  width: 100%;
+}
+
+.btn-group-divider {
+  height: 100%;
+  width: 10px;
+  background: transparent;
+}
+
+.btn {
+  width: 100%;
+  border: none;
+  padding: 10px 0;
+  margin: 5px 0;
+  background: #fff;
+  border: 2px solid #fff;
+
+  &:not(:disabled):hover {
+    cursor: pointer;
+    background: #eeeeee;
+    border: 2px solid #eeeeee;
+  }
+
+  &:not(:disabled):active {
+    // box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
+    transform: translate(1px, 1px);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
 .panel {
   padding: 10px;
 }
@@ -286,7 +306,7 @@ body {
   height: 100%;
   max-width: 500px;
   min-width: 240px;
-  background: green;
+  background: #d8dddb;
   flex-shrink: 0;
 
   .right-panel-resize-area {
@@ -303,7 +323,7 @@ body {
     .right-panel-resize-bar {
       height: 100vh;
       width: 2px;
-      background: magenta;
+      background: #666;
     }
   }
 

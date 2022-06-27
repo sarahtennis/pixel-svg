@@ -16,10 +16,9 @@ export default {
     ColorPicker
   },
   props: ["color", "onColorChange"],
-  methods: {},
-  mounted() {
-    console.log(this.color, this.onColorChange);
+  methods: {
   },
+  mounted() {},
 };
 </script>
 
