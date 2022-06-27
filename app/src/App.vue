@@ -11,22 +11,36 @@
       <div class="right-panel-resize-area" ref="splitter">
         <div class="right-panel-resize-bar"></div>
       </div>
-      <div class="logo"><img src="./assets/logo.svg" alt="PixelSVG" /></div>
-      <color-picker
-        :color="color"
-        :onColorChange="onColorChange"
-      ></color-picker>
-      <dimension-setter :dimensions="dimensions" :updateGridDimensionsAndRerender="updateGridDimensionsAndRerender"></dimension-setter>
-      <div class="generate btn btn-main" @click="() => generateOpacitySvgPaths()">
-        Generate
+      <panel-selector :onUpdatePanel="onUpdatePanel"></panel-selector>
+      <div class="right-panel-header">
+        <div class="logo">
+          <img src="./assets/logo.svg" alt="PixelSVG" />
+        </div>
       </div>
+      <component v-if="currentPanel"
+                 :is="currentPanel"
+                 :color="color"
+                 :onColorChange="onColorChange"
+                 :dimensions="dimensions"
+                 :updateGridDimensionsAndRerender="updateGridDimensionsAndRerender"
+                 :onUpdatePanel="onUpdatePanel">
+      </component>
+      <button class="generate btn btn-main" @click="() => generateOpacitySvgPaths()">
+        Generate
+      </button>
       <textarea v-model="svg" disabled></textarea>
-      <div class="svg-preview" ref="preview" @click="onClickSvgPreview"></div>
+      <button type="button" class="preview btn btn-default" @click="onClickSvgPreview" :disabled="!svg">Preview</button>
       <div class="svg-preview-modal-backdrop" v-if="showSvgPreviewModal" @click="showSvgPreviewModal = false">
         <div class="svg-preview-modal" @click="e => e.stopPropagation()">
           <div class="svg-preview-modal-header">
             <div class="svg-preview-modal-header-title">SVG preview</div>
-            <div class="svg-preview-modal-header-close" @click="showSvgPreviewModal = false">x</div>
+            <div class="svg-preview-modal-header-close" @click="showSvgPreviewModal = false">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M16 31C24.2843 31 31 24.2843 31 16C31 7.71573 24.2843 1 16 1C7.71573 1 1 7.71573 1 16C1 24.2843 7.71573 31 16 31Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M9 9L24 24" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
+                <path d="M8.49512 23.4586L24.5049 9.54144" stroke="currentColor" stroke-width="2" stroke-linecap="square"/>
+              </svg>
+            </div>
           </div>
           <div class="svg-preview-modal-preview" ref="modal-preview" v-html="svg"></div>
         </div>
@@ -42,6 +56,9 @@ import { mergeMap, map, takeUntil, pluck } from "rxjs/operators";
 import ColorPicker from "./components/ColorPicker.vue";
 import Grid from "./components/Grid.vue";
 import DimensionSetter from './components/DimensionSetter.vue';
+import DesignPanel from './components/DesignPanel.vue';
+import GridSettingsPanel from "./components/GridSettingsPanel.vue";
+import PanelSelector from './components/PanelSelector.vue';
 
 export default {
   name: "App",
@@ -49,6 +66,7 @@ export default {
     return {
       svg: "",
       showSvgPreviewModal: false,
+      currentPanel: 'GridSettingsPanel',
       dimensions: {
         rows: 5,
         columns: 10,
@@ -69,7 +87,10 @@ export default {
   components: {
     Grid,
     ColorPicker,
-    DimensionSetter
+    DimensionSetter,
+    DesignPanel,
+    GridSettingsPanel,
+    PanelSelector
   },
   mounted() {
     this.rerenderGrid();
@@ -98,6 +119,10 @@ export default {
     });
   },
   methods: {
+    onUpdatePanel(panelName) {
+      if (this.currentPanel === panelName) return;
+      this.currentPanel = panelName;
+    },
     onClickSvgPreview() {
       if (!this.svg) return;
       this.showSvgPreviewModal = true;
@@ -196,7 +221,6 @@ export default {
       });
 
       this.svg = this.getSvgOpening() + outputPaths + this.getSvgClosing();
-      this.$refs.preview.innerHTML = this.svg;
     },
     generateSvgPaths: function () {
       const {uniqueColors, keyToColor} = this.getColors();
@@ -237,6 +261,7 @@ export default {
 body {
   margin: 0;
   padding: 0;
+  font-family: sans-serif;
 }
 
 #app {
@@ -255,7 +280,7 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: 240px;
+  max-width: 500px;
   min-width: 240px;
   background: green;
   flex-shrink: 0;
@@ -278,13 +303,19 @@ body {
     }
   }
 
-  .logo {
-    img {
-      margin-left: 5px;
-      margin-top: 5px;
-      height: 50px;
+  .right-panel-header {
+    height: 50px;
+    background: #694369;
+    padding: 10px;
+    .logo {
+      height: 100%;
+
+      img {
+        height: 100%;
+      }
     }
   }
+  
 
   .svg-preview {
     width: 100%;
@@ -313,6 +344,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    border-radius: 5px;
+    overflow: hidden;
     width: 90%;
     height: 100%;
     -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
@@ -322,9 +355,21 @@ body {
     .svg-preview-modal-header {
       height: 50px;
       background: #694369;
+      color: #fff;
       display: flex;
+      align-items: center;
+      padding: 10px;
       flex-shrink: 0;
       justify-content: space-between;
+
+      .svg-preview-modal-header-close {
+        color: #fff;
+
+        &:hover {
+          color: #c0c0c0;
+          cursor: pointer;
+        }
+      }
     }
 
     .svg-preview-modal-preview {

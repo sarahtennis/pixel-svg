@@ -1,20 +1,24 @@
 <template>
-  <div class="color-picker" ref="picker">
-    <sketch :value="color" @input="onColorChange" :preset-colors="[]" />
+  <div class="panel design-panel">
+   <color-picker
+      :color="color"
+      :onColorChange="onColorChange"
+    ></color-picker>
   </div>
 </template>
 
 <script>
-import { Sketch } from "vue-color";
+import ColorPicker from './ColorPicker.vue';
 
 export default {
-  name: "ColorPicker",
+  name: "DesignPanel",
   components: {
-    Sketch,
+    ColorPicker
   },
   props: ["color", "onColorChange"],
   methods: {},
   mounted() {
+    console.log(this.color, this.onColorChange);
   },
 };
 </script>
