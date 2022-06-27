@@ -11,7 +11,6 @@
       <div class="right-panel-resize-area" ref="splitter">
         <div class="right-panel-resize-bar"></div>
       </div>
-      <panel-selector :onUpdatePanel="onUpdatePanel"></panel-selector>
       <div class="right-panel-header">
         <div class="logo">
           <img src="./assets/logo.svg" alt="PixelSVG" />
@@ -25,6 +24,7 @@
                  :updateGridDimensionsAndRerender="updateGridDimensionsAndRerender"
                  :onUpdatePanel="onUpdatePanel">
       </component>
+      <panel-selector :onUpdatePanel="onUpdatePanel" :currentPanel="currentPanel"></panel-selector>
       <button class="generate btn btn-main" @click="() => generateOpacitySvgPaths()">
         Generate
       </button>
@@ -268,6 +268,10 @@ body {
   display: flex;
   height: 100vh;
   width: 100vw;
+}
+
+.panel {
+  padding: 10px;
 }
 
 .left-panel {
