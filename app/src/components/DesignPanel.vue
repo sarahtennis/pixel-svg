@@ -1,23 +1,26 @@
 <template>
   <div class="panel design-panel">
-   <color-picker
-      :color="color"
-      :onColorChange="onColorChange"
-    ></color-picker>
+    <div class="panel-header">Design</div>
+    <div class="panel-content">
+      <color-picker
+        :color="color"
+        :onColorChange="onColorChange"
+        :updateGridDimensionsAndRerender="updateGridDimensionsAndRerender"
+      ></color-picker>
+    </div>
   </div>
 </template>
 
 <script>
-import ColorPicker from './ColorPicker.vue';
+import ColorPicker from "./ColorPicker.vue";
 
 export default {
   name: "DesignPanel",
   components: {
-    ColorPicker
+    ColorPicker,
   },
-  props: ["color", "onColorChange"],
-  methods: {
-  },
+  props: ["color", "onColorChange", 'updateGridDimensionsAndRerender'],
+  methods: {},
   mounted() {},
 };
 </script>
@@ -28,7 +31,8 @@ export default {
   .vc-sketch {
     border-radius: 0;
     box-shadow: none;
-    width: calc(100% - 20px);
+    width: 100%;
+    padding: 0;
 
     .vc-sketch-field input,
     .vc-sketch-field span {

@@ -43,5 +43,6 @@ export default {
   border-top: none;
   grid-row-gap: 1px;
   border: 1px solid black;
+  margin: 20px;
 }
 </style>

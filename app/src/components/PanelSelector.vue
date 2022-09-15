@@ -43,17 +43,35 @@ export default {
       height: 50px;
       width: 100%;
       border: none;
-      background: #999;
-      color: #333;
+      color: #1a1a1a;
+      background: #fff;
+      border-bottom: 2px solid #1a1a1a;
 
       &:not(.selected):hover {
-        background: #888;
-        color: #222;
+        // background: #ddcbff;
         cursor: pointer;
+        svg {
+          transform: scale(1.1);
+        }
       }
       
       &.selected {
-        background: #d8dddb;
+        background: #8a2be2;
+        color: #fff;
+        border-bottom: none;
+
+        &:nth-of-type(1) {
+          border-right: 2px solid #1a1a1a;
+        }
+
+        &:nth-of-type(2) {
+          border-right: 2px solid #1a1a1a;
+          border-left: 2px solid #1a1a1a;
+        }
+
+        &:nth-of-type(3) {
+          border-left: 2px solid #1a1a1a;
+        }
       }
 
       svg {
