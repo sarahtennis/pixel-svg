@@ -7,9 +7,9 @@
 			<span>Columns: {{ dimensions.columns }}</span>
 		</div>
     <form @submit="onSubmit">
-			<input type="number" min="1" max="100" v-model="rows"></input>
-			<input type="number" min="1" max="100" v-model="columns"></input>
-			<button class="btn btn-main" type="submit">Generate new</button>
+			<input type="number" min="1" max="100" v-model="rows" />
+			<input type="number" min="1" max="100" v-model="columns" />
+			<button class="btn generate-new btn-main" type="submit">Generate new</button>
     </form>
   </div>
 </template>
@@ -42,4 +42,7 @@ export default {
 </script>
 
 <style lang="scss">
+.generate-new {
+	background: #04e762;
+}
 </style>

@@ -1,35 +1,40 @@
 <template>
   <div id="app" :style="{ 'user-select': isDragging ? 'none' : '' }">
-    <div class="left-panel">
-      <grid
-        :grid="grid"
-        :color="color"
-        :updateColorAtIndex="updateColorAtIndex"
-      ></grid>
+    <div class="logo-header">
+      <div class="logo">
+        <img src="./assets/logo.svg" alt="PixelSVG" />
+      </div>
     </div>
-    <div class="right-panel" :style="{ width: widthOfPanel }">
-      <div class="right-panel-resize-area" ref="splitter">
-        <div class="right-panel-resize-bar"></div>
+    <div class="main-container">
+      <div class="left-panel">
+        <grid
+          :grid="grid"
+          :color="color"
+          :updateColorAtIndex="updateColorAtIndex"
+        ></grid>
       </div>
-      <div class="logo"><img src="./assets/logo.svg" alt="PixelSVG" /></div>
-      <color-picker
-        :color="color"
-        :onColorChange="onColorChange"
-      ></color-picker>
-      <dimension-setter :dimensions="dimensions" :updateGridDimensionsAndRerender="updateGridDimensionsAndRerender"></dimension-setter>
-      <div class="generate btn btn-main" @click="() => generateOpacitySvgPaths()">
-        Generate
-      </div>
-      <textarea v-model="svg" disabled></textarea>
-      <div class="svg-preview" ref="preview" @click="onClickSvgPreview"></div>
-      <div class="svg-preview-modal-backdrop" v-if="showSvgPreviewModal" @click="showSvgPreviewModal = false">
-        <div class="svg-preview-modal" @click="e => e.stopPropagation()">
-          <div class="svg-preview-modal-header">
-            <div class="svg-preview-modal-header-title">SVG preview</div>
-            <div class="svg-preview-modal-header-close" @click="showSvgPreviewModal = false">x</div>
-          </div>
-          <div class="svg-preview-modal-preview" ref="modal-preview" v-html="svg"></div>
+      <div class="right-panel" :style="{ width: widthOfPanel }">
+        <div class="right-panel-resize-area" ref="splitter">
+          <div class="right-panel-resize-bar"></div>
         </div>
+        <panel-selector
+          :onUpdatePanel="onUpdatePanel"
+          :currentPanel="currentPanel"
+        ></panel-selector>
+        <keep-alive>
+          <component
+            v-if="currentPanel"
+            :is="currentPanel"
+            :color="color"
+            :onColorChange="onColorChange"
+            :dimensions="dimensions"
+            :updateGridDimensionsAndRerender="updateGridDimensionsAndRerender"
+            :onUpdatePanel="onUpdatePanel"
+            :onGenerate="onGenerate"
+            :svg="svg"
+          >
+          </component>
+        </keep-alive>
       </div>
     </div>
   </div>
@@ -41,14 +46,18 @@ import { mergeMap, map, takeUntil, pluck } from "rxjs/operators";
 
 import ColorPicker from "./components/ColorPicker.vue";
 import Grid from "./components/Grid.vue";
-import DimensionSetter from './components/DimensionSetter.vue';
+import DimensionSetter from "./components/DimensionSetter.vue";
+import DesignPanel from "./components/DesignPanel.vue";
+import GridSettingsPanel from "./components/GridSettingsPanel.vue";
+import PanelSelector from "./components/PanelSelector.vue";
+import GeneratePanel from "./components/GeneratePanel.vue";
 
 export default {
   name: "App",
   data: function () {
     return {
       svg: "",
-      showSvgPreviewModal: false,
+      currentPanel: "GridSettingsPanel",
       dimensions: {
         rows: 5,
         columns: 10,
@@ -69,7 +78,11 @@ export default {
   components: {
     Grid,
     ColorPicker,
-    DimensionSetter
+    DimensionSetter,
+    DesignPanel,
+    GridSettingsPanel,
+    PanelSelector,
+    GeneratePanel,
   },
   mounted() {
     this.rerenderGrid();
@@ -98,20 +111,25 @@ export default {
     });
   },
   methods: {
-    onClickSvgPreview() {
-      if (!this.svg) return;
-      this.showSvgPreviewModal = true;
+    onUpdatePanel(panelName) {
+      if (this.currentPanel === panelName) return;
+      this.currentPanel = panelName;
     },
     updateGridDimensionsAndRerender(newDimensionsObject) {
-      console.log(newDimensionsObject);
-      this.dimensions = newDimensionsObject;
+      if (newDimensionsObject) {
+        this.dimensions = newDimensionsObject;
+      }
       this.rerenderGrid();
+    },
+    onGenerate() {
+      this.generateOpacitySvgPaths();
     },
     rerenderGrid() {
       const grid = new Array(this.dimensions.rows).fill(
         new Array(this.dimensions.columns).fill(null)
       );
       this.grid = grid;
+      this.svg = "";
     },
     updateColorAtIndex: function (row, col) {
       const newGrid = JSON.parse(JSON.stringify(this.grid));
@@ -119,6 +137,7 @@ export default {
       this.grid = newGrid;
     },
     onColorChange(e) {
+      if (!e) this.color = null;
       this.color = e;
     },
     getFillString(color) {
@@ -131,11 +150,14 @@ export default {
       return color.a;
     },
     getSvgOpening() {
-      if (!this.dimensions || !this.dimensions.columns || !this.dimensions.rows) return '';
+      if (!this.dimensions || !this.dimensions.columns || !this.dimensions.rows)
+        return "";
 
       const tallerThanWide = this.dimensions.columns < this.dimensions.rows;
 
-      const opening = `<svg class="${tallerThanWide ? 'max-height' : 'max-width'}" xmlns="http://www.w3.org/2000/svg" width="${
+      const opening = `<svg class="${
+        tallerThanWide ? "max-height" : "max-width"
+      }" xmlns="http://www.w3.org/2000/svg" width="${
         this.dimensions.columns
       }" height="${this.dimensions.rows}" viewBox="0 0 ${
         this.dimensions.columns + " " + this.dimensions.rows
@@ -144,13 +166,14 @@ export default {
       return opening;
     },
     getSvgClosing() {
-      return '</svg>';
+      return "</svg>";
     },
     getColors() {
-      if (!this.grid || !this.grid.length || !this.grid[0].length) return {
-        uniqueColors: null,
-        keyToColor: null
-      };
+      if (!this.grid || !this.grid.length || !this.grid[0].length)
+        return {
+          uniqueColors: null,
+          keyToColor: null,
+        };
 
       const uniqueColors = {};
       const keyToColor = {};
@@ -171,24 +194,24 @@ export default {
 
       return {
         uniqueColors,
-        keyToColor
+        keyToColor,
       };
     },
     generateOpacitySvgPaths() {
-      const {uniqueColors, keyToColor} = this.getColors();
-      if (!uniqueColors || !keyToColor) return '';
+      const { uniqueColors, keyToColor } = this.getColors();
+      if (!uniqueColors || !keyToColor) return "";
 
       let outputPaths = "";
       Object.keys(uniqueColors).forEach((colorKey) => {
         if (!colorKey) return;
         const positions = uniqueColors[colorKey];
-        let singlePath = `<path fill="${this.getOpacityFillString(keyToColor[colorKey])}"
-                                fill-opacity="${this.getOpacityFillOpacityString(keyToColor[colorKey])}"
-                                d="`;
+        let singlePath = `<path fill="${this.getOpacityFillString(
+          keyToColor[colorKey]
+        )}" fill-opacity="${this.getOpacityFillOpacityString(
+          keyToColor[colorKey]
+        )}" d="`;
         positions.forEach((position) => {
-          const squarePath = `M ${position.y} ${
-            position.x
-          } h 1 v 1 h -1 L ${position.y} ${position.x} `;
+          const squarePath = `M ${position.y} ${position.x} h 1 v 1 h -1 L ${position.y} ${position.x} `;
           singlePath += squarePath;
         });
         singlePath += '"/>';
@@ -196,11 +219,10 @@ export default {
       });
 
       this.svg = this.getSvgOpening() + outputPaths + this.getSvgClosing();
-      this.$refs.preview.innerHTML = this.svg;
     },
     generateSvgPaths: function () {
-      const {uniqueColors, keyToColor} = this.getColors();
-      if (!uniqueColors || !keyToColor) return '';
+      const { uniqueColors, keyToColor } = this.getColors();
+      if (!uniqueColors || !keyToColor) return "";
 
       let outputPaths = "";
       Object.keys(uniqueColors).forEach((colorKey) => {
@@ -237,12 +259,72 @@ export default {
 body {
   margin: 0;
   padding: 0;
+  font-family: sans-serif;
 }
 
 #app {
   display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   height: 100vh;
   width: 100vw;
+  color: #1a1a1a;
+  overflow: hidden;
+}
+
+.main-container {
+  height: calc(100% - 50px);
+  width: 100%;
+  display: flex;
+}
+
+.btn-group {
+  display: flex;
+  width: 100%;
+}
+
+.btn-group-divider {
+  height: 100%;
+  width: 10px;
+  background: transparent;
+}
+
+.btn {
+  width: 100%;
+  padding: 10px 0;
+  margin: 5px 0;
+  border: 2px solid #1a1a1a;
+  background: #fff;
+
+  &:not(:disabled):active {
+    // box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
+    transform: translate(1px, 1px);
+  }
+
+  &:not(:disabled):hover {
+    cursor: pointer;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    border: 2px solid lighten(#1a1a1a, 60%);
+    color: lighten(#1a1a1a, 60%);
+  }
+}
+
+.logo-header {
+  height: 50px;
+  width: 100%;
+  background: #ff7b00;
+  border-bottom: 2px solid #1a1a1a;
+  padding: 10px;
+  .logo {
+    height: 100%;
+
+    img {
+      height: 100%;
+    }
+  }
 }
 
 .left-panel {
@@ -255,9 +337,9 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: 240px;
+  max-width: 500px;
   min-width: 240px;
-  background: green;
+  background: #fff;
   flex-shrink: 0;
 
   .right-panel-resize-area {
@@ -274,15 +356,7 @@ body {
     .right-panel-resize-bar {
       height: 100vh;
       width: 2px;
-      background: magenta;
-    }
-  }
-
-  .logo {
-    img {
-      margin-left: 5px;
-      margin-top: 5px;
-      height: 50px;
+      background: #1a1a1a;
     }
   }
 
@@ -313,6 +387,8 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    border-radius: 5px;
+    overflow: hidden;
     width: 90%;
     height: 100%;
     -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
@@ -322,9 +398,21 @@ body {
     .svg-preview-modal-header {
       height: 50px;
       background: #694369;
+      color: #fff;
       display: flex;
+      align-items: center;
+      padding: 10px;
       flex-shrink: 0;
       justify-content: space-between;
+
+      .svg-preview-modal-header-close {
+        color: #fff;
+
+        &:hover {
+          color: #c0c0c0;
+          cursor: pointer;
+        }
+      }
     }
 
     .svg-preview-modal-preview {

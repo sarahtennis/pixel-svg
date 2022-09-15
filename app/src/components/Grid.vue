@@ -29,7 +29,7 @@ export default {
         .join(" ");
       return {
         "grid-template-columns": "auto",
-        "grid-template-rows": gridTemplateRows,
+        "grid-template-rows": gridTemplateRows
       };
     },
   },
@@ -43,5 +43,6 @@ export default {
   border-top: none;
   grid-row-gap: 1px;
   border: 1px solid black;
+  margin: 20px;
 }
 </style>
