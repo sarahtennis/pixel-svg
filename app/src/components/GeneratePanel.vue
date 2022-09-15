@@ -102,11 +102,10 @@ export default {
   height: 50px;
   font-size: 24px;
   color: #fff;
-  padding: 0 20px;
+  padding: 0 10px;
 }
 
 .panel-content {
-  padding: 20px;
   width: 100%;
 }
 </style>

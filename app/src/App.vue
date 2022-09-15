@@ -272,6 +272,21 @@ body {
   overflow: hidden;
 }
 
+.group-label {
+  display: flex;
+	align-items: center;
+  width: 100%;
+  font-size: 18px;
+  background: #fbff12;
+  margin-bottom: 5px;
+  padding: 5px 20px;
+  border-bottom: 2px solid #1a1a1a;
+
+  &:not(.first) {
+    border-top: 2px solid #1a1a1a;
+  }
+}
+
 .main-container {
   height: calc(100% - 50px);
   width: 100%;
