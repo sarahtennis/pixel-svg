@@ -61,10 +61,6 @@ export default {
   padding: 0 20px;
 }
 
-// .dimension-setter-section:not(:last-of-type) {
-//   margin-bottom: 10px;
-// }
-
 .current-dimension-row {
   display: flex;
   justify-content: space-between;

@@ -97,15 +97,16 @@ export default {
 .panel-header {
   display: flex;
   align-items: center;
-  background: #8a2be2;
-  border-bottom: 2px solid #1a1a1a;
-  height: 50px;
-  font-size: 24px;
+  background: #3E4C59;
+  height: 30px;
+  font-size: 18px;
+  letter-spacing: 2px;
   color: #fff;
   padding: 0 10px;
 }
 
 .panel-content {
   width: 100%;
+  padding: 10px;
 }
 </style>

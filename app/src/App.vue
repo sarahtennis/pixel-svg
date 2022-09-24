@@ -12,15 +12,13 @@
           :color="color"
           :updateColorAtIndex="updateColorAtIndex"
         ></grid>
-      </div>
-      <div class="right-panel" :style="{ width: widthOfPanel }">
-        <div class="right-panel-resize-area" ref="splitter">
-          <div class="right-panel-resize-bar"></div>
-        </div>
         <panel-selector
           :onUpdatePanel="onUpdatePanel"
           :currentPanel="currentPanel"
         ></panel-selector>
+      </div>
+      <div class="right-panel" :style="{ width: widthOfPanel }">
+        <div class="right-panel-resize-area" ref="splitter"></div>
         <keep-alive>
           <component
             v-if="currentPanel"
@@ -153,11 +151,7 @@ export default {
       if (!this.dimensions || !this.dimensions.columns || !this.dimensions.rows)
         return "";
 
-      const tallerThanWide = this.dimensions.columns < this.dimensions.rows;
-
-      const opening = `<svg class="${
-        tallerThanWide ? "max-height" : "max-width"
-      }" xmlns="http://www.w3.org/2000/svg" width="${
+      const opening = `<svg xmlns="http://www.w3.org/2000/svg" width="${
         this.dimensions.columns
       }" height="${this.dimensions.rows}" viewBox="0 0 ${
         this.dimensions.columns + " " + this.dimensions.rows
@@ -268,16 +262,17 @@ body {
   justify-content: flex-start;
   height: 100vh;
   width: 100vw;
-  color: #1a1a1a;
+  color: #f5f7fa;
   overflow: hidden;
 }
 
 .group-label {
   display: flex;
-	align-items: center;
+  align-items: center;
   width: 100%;
   font-size: 18px;
-  background: #fbff12;
+  background: #616e7c;
+  color: #f5f7fa;
   margin-bottom: 5px;
   padding: 5px 20px;
   border-bottom: 2px solid #1a1a1a;
@@ -288,9 +283,11 @@ body {
 }
 
 .main-container {
-  height: calc(100% - 50px);
+  position: relative;
+  height: 100%;
   width: 100%;
   display: flex;
+  background: #1f2933;
 }
 
 .btn-group {
@@ -328,11 +325,13 @@ body {
 }
 
 .logo-header {
-  height: 50px;
+  position: relative;
+  z-index: 1000;
   width: 100%;
-  background: #ff7b00;
-  border-bottom: 2px solid #1a1a1a;
-  padding: 10px;
+  height: 50px;
+  background: #323f4b;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.5);
+  padding: 5px 10px;
   .logo {
     height: 100%;
 
@@ -343,6 +342,7 @@ body {
 }
 
 .left-panel {
+  position: relative;
   width: 100%;
   overflow: scroll;
 }
@@ -354,24 +354,27 @@ body {
   height: 100%;
   max-width: 500px;
   min-width: 240px;
-  background: #fff;
+  background: #323f4b;
   flex-shrink: 0;
+  box-shadow: -2px 0 2px -1px rgba(0,0,0,.5);
 
   .right-panel-resize-area {
-    padding: 0 2px;
     position: absolute;
-    z-index: 2;
-    left: -2px;
-    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
 
     &:hover {
       cursor: ew-resize;
     }
 
-    .right-panel-resize-bar {
-      height: 100vh;
-      width: 2px;
-      background: #1a1a1a;
+    &:before {
+      content: "";
+      position: absolute;
+      height: 100%;
+      width: 6px;
+      left: -3px;
+      top: 0;
     }
   }
 
