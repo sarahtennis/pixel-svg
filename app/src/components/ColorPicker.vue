@@ -7,7 +7,7 @@
     />
     <div class="btn-group">
       <button
-        :class="{ 'is-erasing': !this.color, 'inactive': !!this.color }"
+        :class="{ 'is-erasing': !this.color, inactive: !!this.color }"
         type="button"
         @click="onChooseErase"
         class="btn design-btn"
@@ -26,7 +26,7 @@
         </svg>
       </button>
       <div class="btn-group-divider"></div>
-      <button type="button" class="btn design-btn" disabled>
+      <button type="button" class="btn design-btn inactive">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -99,7 +99,7 @@ export default {
     border-radius: 0;
     box-shadow: none;
     width: calc(100% - 20px);
-    background: #616E7C;
+    background: #616e7c;
 
     .vc-sketch-field {
       text-align: center;
@@ -115,7 +115,7 @@ export default {
     }
 
     .vc-input__label {
-      color: #FFFFFF;
+      color: #ffffff;
     }
 
     .vc-sketch-presets {
@@ -134,19 +134,36 @@ export default {
     }
   }
 
-  .design-btn.inactive {
-    background: #9AA5B1;
-    color: #E4E7EB;
+  .design-btn {
+    position: relative;
+    background: #9aa5b1;
+    color: #323f4b;
+
+    &:not(.inactive):after {
+      content: "";
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 10px;
+      border-color: #616e7c transparent transparent #616e7c;
+      left: 0;
+      top: 0;
+      position: absolute;
+    }
   }
 
-  .btn.is-erasing {
-    background: #2176ff;
+  .design-btn.inactive {
+    color: #9AA5B1;
+    background: #616e7c;
   }
 
   .btn-destroy {
     margin-top: 0;
-    background: #FF5630;
-    color: #fff;
+
+    &:hover {
+      background: #ff5630;
+      color: #fff;
+    }
   }
 }
 </style>

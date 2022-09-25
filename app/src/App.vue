@@ -261,15 +261,15 @@ input {
   box-shadow: none;
   background: #323f4b !important;
   border: none !important;
-  border-bottom: 2px solid #79E2F2 !important;
+  border-bottom: 2px solid #79e2f2 !important;
   box-shadow: none !important;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   padding: 4px !important;
   padding-bottom: 2px !important;
 }
 
 input:focus {
-  border: 2px solid #79E2F2 !important;
+  border: 2px solid #79e2f2 !important;
   padding: 2px !important;
 }
 
@@ -324,7 +324,9 @@ input:focus {
   width: 100%;
   padding: 10px 0;
   margin: 5px 0;
-  background: #fff;
+  font-size: 14px;
+  color: #FFF;
+  background: #616e7c;
 
   &:not(:disabled):active {
     // box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
@@ -374,7 +376,7 @@ input:focus {
   min-width: 240px;
   background: #323f4b;
   flex-shrink: 0;
-  box-shadow: -2px 0 2px -1px rgba(0,0,0,.5);
+  box-shadow: -2px 0 2px -1px rgba(0, 0, 0, 0.5);
 
   .right-panel-resize-area {
     position: absolute;
