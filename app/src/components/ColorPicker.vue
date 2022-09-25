@@ -40,7 +40,9 @@
         </svg>
       </button>
     </div>
-    <button type="button" class="btn btn-destroy" @click="onClearAll">Clear all</button>
+    <button type="button" class="btn btn-destroy" @click="onClearAll">
+      Clear all
+    </button>
   </div>
 </template>
 
@@ -52,7 +54,7 @@ export default {
   components: {
     Sketch,
   },
-  props: ["color", "onColorChange", 'updateGridDimensionsAndRerender'],
+  props: ["color", "onColorChange", "updateGridDimensionsAndRerender"],
   data() {
     return {
       previousColor: {
@@ -84,7 +86,7 @@ export default {
     },
     onClearAll() {
       this.updateGridDimensionsAndRerender();
-    }
+    },
   },
   mounted() {},
 };

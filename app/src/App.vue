@@ -57,15 +57,15 @@ export default {
       svg: "",
       currentPanel: "GridSettingsPanel",
       dimensions: {
-        rows: 5,
+        rows: 10,
         columns: 10,
       },
       grid: [],
       color: {
         rgba: {
           r: 255,
-          g: 0,
-          b: 255,
+          g: 116,
+          b: 82,
           a: 1,
         },
       },

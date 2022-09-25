@@ -98,6 +98,7 @@ export default {
   display: flex;
   align-items: center;
   background: #3E4C59;
+  border-bottom: 1px solid #616E7C;
   height: 30px;
   font-size: 18px;
   letter-spacing: 2px;
