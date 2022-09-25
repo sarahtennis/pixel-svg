@@ -1,5 +1,5 @@
 <template>
-  <div class="grid" :style="getGridStyle()">
+  <div class="grid" :style="getGridStyle()" :class="{ 'cursor-eraser': !this.color }">
     <grid-row
       v-for="(row, index) in grid"
       :selectedColor="color"
@@ -44,5 +44,10 @@ export default {
   grid-row-gap: 1px;
   border: 1px solid black;
   margin: 20px;
+  cursor: url('../assets/pencil.svg') 0 24, default;
+
+  &.cursor-eraser {
+    cursor: url('../assets/eraser.svg') 0 24, default;
+  }
 }
 </style>

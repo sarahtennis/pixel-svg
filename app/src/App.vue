@@ -57,15 +57,15 @@ export default {
       svg: "",
       currentPanel: "GridSettingsPanel",
       dimensions: {
-        rows: 5,
+        rows: 10,
         columns: 10,
       },
       grid: [],
       color: {
         rgba: {
           r: 255,
-          g: 0,
-          b: 255,
+          g: 116,
+          b: 82,
           a: 1,
         },
       },
@@ -256,6 +256,23 @@ body {
   font-family: sans-serif;
 }
 
+input {
+  outline: none;
+  box-shadow: none;
+  background: #323f4b !important;
+  border: none !important;
+  border-bottom: 2px solid #79e2f2 !important;
+  box-shadow: none !important;
+  color: #ffffff !important;
+  padding: 4px !important;
+  padding-bottom: 2px !important;
+}
+
+input:focus {
+  border: 2px solid #79e2f2 !important;
+  padding: 2px !important;
+}
+
 #app {
   display: flex;
   flex-direction: column;
@@ -302,11 +319,14 @@ body {
 }
 
 .btn {
+  border: none;
+  outline: none;
   width: 100%;
   padding: 10px 0;
   margin: 5px 0;
-  border: 2px solid #1a1a1a;
-  background: #fff;
+  font-size: 14px;
+  color: #FFF;
+  background: #616e7c;
 
   &:not(:disabled):active {
     // box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.5);
@@ -356,7 +376,7 @@ body {
   min-width: 240px;
   background: #323f4b;
   flex-shrink: 0;
-  box-shadow: -2px 0 2px -1px rgba(0,0,0,.5);
+  box-shadow: -2px 0 2px -1px rgba(0, 0, 0, 0.5);
 
   .right-panel-resize-area {
     position: absolute;

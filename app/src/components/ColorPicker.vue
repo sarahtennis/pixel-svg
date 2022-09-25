@@ -7,7 +7,7 @@
     />
     <div class="btn-group">
       <button
-        :class="{ 'is-erasing': !this.color }"
+        :class="{ 'is-erasing': !this.color, inactive: !!this.color }"
         type="button"
         @click="onChooseErase"
         class="btn design-btn"
@@ -26,7 +26,7 @@
         </svg>
       </button>
       <div class="btn-group-divider"></div>
-      <button type="button" class="btn design-btn" disabled>
+      <button type="button" class="btn design-btn inactive">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -40,7 +40,9 @@
         </svg>
       </button>
     </div>
-    <button type="button" class="btn btn-destroy" @click="onClearAll">Clear all</button>
+    <button type="button" class="btn btn-destroy" @click="onClearAll">
+      Clear all
+    </button>
   </div>
 </template>
 
@@ -52,7 +54,7 @@ export default {
   components: {
     Sketch,
   },
-  props: ["color", "onColorChange", 'updateGridDimensionsAndRerender'],
+  props: ["color", "onColorChange", "updateGridDimensionsAndRerender"],
   data() {
     return {
       previousColor: {
@@ -84,7 +86,7 @@ export default {
     },
     onClearAll() {
       this.updateGridDimensionsAndRerender();
-    }
+    },
   },
   mounted() {},
 };
@@ -97,10 +99,23 @@ export default {
     border-radius: 0;
     box-shadow: none;
     width: calc(100% - 20px);
+    background: #616e7c;
+
+    .vc-sketch-field {
+      text-align: center;
+    }
 
     .vc-sketch-field input,
     .vc-sketch-field span {
       font-size: 14px !important;
+    }
+
+    .vc-input__input:focus ~ .vc-input__label {
+      font-weight: bold;
+    }
+
+    .vc-input__label {
+      color: #ffffff;
     }
 
     .vc-sketch-presets {
@@ -108,16 +123,47 @@ export default {
       padding: 0;
       border: none;
     }
+
+    .vc-sketch-controls {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    .vc-saturation {
+      margin: 10px;
+    }
   }
 
-  .btn.is-erasing {
-    background: #2176ff;
+  .design-btn {
+    position: relative;
+    background: #9aa5b1;
+    color: #323f4b;
+
+    &:not(.inactive):after {
+      content: "";
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 10px;
+      border-color: #616e7c transparent transparent #616e7c;
+      left: 0;
+      top: 0;
+      position: absolute;
+    }
+  }
+
+  .design-btn.inactive {
+    color: #9AA5B1;
+    background: #616e7c;
   }
 
   .btn-destroy {
     margin-top: 0;
-    background: #ff006e;
-    color: #fff;
+
+    &:hover {
+      background: #ff5630;
+      color: #fff;
+    }
   }
 }
 </style>

@@ -99,8 +99,8 @@ export default {
     height: 40px;
     width: 40px;
     border: none;
-    color: #1a1a1a;
-    background: #fff;
+    color: #9AA5B1;
+    background: #616E7C;
 
     &:not(.selected):hover {
       // background: #ddcbff;
@@ -108,9 +108,11 @@ export default {
     }
 
     &.selected {
-      background: #8a2be2;
-      color: #fff;
+      position: relative;
+      background: #323f4b;
+      color: #79E2F2;
       border-bottom: none;
+      z-index: 10;
     }
 
     svg {
