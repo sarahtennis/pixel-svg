@@ -1,2 +1,2 @@
 # pixel-svg
-![Screenshot](screenshot.png)
+![Screenshot](dark-screenshot.png)
