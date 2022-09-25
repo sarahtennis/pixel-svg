@@ -6,11 +6,13 @@
       </div>
     </div>
     <div class="main-container">
-      <div class="left-panel">
+      <div class="left-panel" ref="leftPanel">
         <grid
           :grid="grid"
           :color="color"
           :updateColorAtIndex="updateColorAtIndex"
+          :shiftGrid="shiftGrid"
+          :translateGrid="translateGrid"
         ></grid>
         <panel-selector
           :onUpdatePanel="onUpdatePanel"
@@ -83,6 +85,10 @@ export default {
     GeneratePanel,
   },
   mounted() {
+    document.addEventListener("contextmenu", (e) => {
+      e.preventDefault();
+      return false;
+    });
     this.rerenderGrid();
     const splitter = this.$refs.splitter;
     const $splitterMousedown = fromEvent(splitter, "mousedown");
@@ -109,6 +115,13 @@ export default {
     });
   },
   methods: {
+    shiftGrid(isUp) {
+      this.$refs.leftPanel.scrollTop += isUp ? 48 : -48;
+    },
+    translateGrid(move) {
+      this.$refs.leftPanel.scrollTop -= move.y;
+      this.$refs.leftPanel.scrollLeft -= move.x;
+    },
     onUpdatePanel(panelName) {
       if (this.currentPanel === panelName) return;
       this.currentPanel = panelName;
@@ -325,7 +338,7 @@ input:focus {
   padding: 10px 0;
   margin: 5px 0;
   font-size: 14px;
-  color: #FFF;
+  color: #fff;
   background: #616e7c;
 
   &:not(:disabled):active {
@@ -364,7 +377,7 @@ input:focus {
 .left-panel {
   position: relative;
   width: 100%;
-  overflow: scroll;
+  overflow: hidden;
 }
 
 .right-panel {

@@ -44,7 +44,7 @@ export default {
       if (!this.selectedColor) return;
       const { r, g, b, a } = this.selectedColor.rgba;
       return {
-        background: `rgba(${r}, ${g}, ${b}, ${a})`
+        background: `rgba(${r}, ${g}, ${b}, ${a})`,
       };
     },
     getStyle: function () {
@@ -77,6 +77,5 @@ export default {
   height: 100%;
   width: 100%;
   position: absolute;
-  z-index: 2;
 }
 </style>

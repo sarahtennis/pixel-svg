@@ -8,6 +8,7 @@
       :rowIndex="rowKey"
       :key="'r' + rowKey + 'c' + index"
       :updateColorAtIndex="updateColorAtIndex"
+      :isDragging="isDragging"
     ></square>
   </div>
 </template>
@@ -19,7 +20,7 @@ export default {
   components: {
     Square,
   },
-  props: ["row", "rowKey", "updateColorAtIndex", "selectedColor"],
+  props: ["row", "rowKey", "updateColorAtIndex", "selectedColor", "isDragging"],
   methods: {
     getStyles() {
       const gridTemplateColumns = new Array(this.row.length)

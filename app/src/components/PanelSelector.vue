@@ -85,22 +85,23 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 .panel-selector-container {
-  position: absolute;
+  position: sticky;
   width: 40px;
   right: 0;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
+  margin-left: auto;
   background: #fff;
-  box-shadow: 0 0 2px 1px rgba(0,0,0,.5);
+  box-shadow: 0 0 2px 1px rgba(0, 0, 0, 0.5);
 
   .panel-selector-btn {
     height: 40px;
     width: 40px;
     border: none;
-    color: #9AA5B1;
-    background: #616E7C;
+    color: #9aa5b1;
+    background: #616e7c;
 
     &:not(.selected):hover {
       // background: #ddcbff;
@@ -110,7 +111,7 @@ export default {
     &.selected {
       position: relative;
       background: #323f4b;
-      color: #79E2F2;
+      color: #79e2f2;
       border-bottom: none;
       z-index: 10;
     }
