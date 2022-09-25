@@ -256,6 +256,23 @@ body {
   font-family: sans-serif;
 }
 
+input {
+  outline: none;
+  box-shadow: none;
+  background: #323f4b !important;
+  border: none !important;
+  border-bottom: 2px solid #79E2F2 !important;
+  box-shadow: none !important;
+  color: #FFFFFF !important;
+  padding: 4px !important;
+  padding-bottom: 2px !important;
+}
+
+input:focus {
+  border: 2px solid #79E2F2 !important;
+  padding: 2px !important;
+}
+
 #app {
   display: flex;
   flex-direction: column;
@@ -302,10 +319,11 @@ body {
 }
 
 .btn {
+  border: none;
+  outline: none;
   width: 100%;
   padding: 10px 0;
   margin: 5px 0;
-  border: 2px solid #1a1a1a;
   background: #fff;
 
   &:not(:disabled):active {

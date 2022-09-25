@@ -7,7 +7,7 @@
     />
     <div class="btn-group">
       <button
-        :class="{ 'is-erasing': !this.color }"
+        :class="{ 'is-erasing': !this.color, 'inactive': !!this.color }"
         type="button"
         @click="onChooseErase"
         class="btn design-btn"
@@ -99,10 +99,23 @@ export default {
     border-radius: 0;
     box-shadow: none;
     width: calc(100% - 20px);
+    background: #616E7C;
+
+    .vc-sketch-field {
+      text-align: center;
+    }
 
     .vc-sketch-field input,
     .vc-sketch-field span {
       font-size: 14px !important;
+    }
+
+    .vc-input__input:focus ~ .vc-input__label {
+      font-weight: bold;
+    }
+
+    .vc-input__label {
+      color: #FFFFFF;
     }
 
     .vc-sketch-presets {
@@ -110,6 +123,20 @@ export default {
       padding: 0;
       border: none;
     }
+
+    .vc-sketch-controls {
+      margin-left: 10px;
+      margin-right: 10px;
+    }
+
+    .vc-saturation {
+      margin: 10px;
+    }
+  }
+
+  .design-btn.inactive {
+    background: #9AA5B1;
+    color: #E4E7EB;
   }
 
   .btn.is-erasing {
@@ -118,7 +145,7 @@ export default {
 
   .btn-destroy {
     margin-top: 0;
-    background: #ff006e;
+    background: #FF5630;
     color: #fff;
   }
 }
