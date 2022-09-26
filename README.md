@@ -1,2 +1,2 @@
-# pixel-svg
+# PixelSVG
 ![Screenshot](dark-screenshot.png)
